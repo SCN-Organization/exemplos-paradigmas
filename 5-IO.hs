@@ -69,7 +69,7 @@ putList (a : as) = do putStr (show (a) ++ " ")
 --------------------------------------------------
 
 listaStrings :: [String] -> IO()
-listaStrings [] = putStrLn ""
+listaStrings [] = putStrLn "---FIM---"
 listaStrings (h:t) = do 
                           putStrLn h  
                           listaStrings t
@@ -82,7 +82,13 @@ remover [] _ = []
 remover (a:as) s | a == s = as
                  | otherwise = a : (remover as s)
 
+escreveArquivo :: FilePath -> [String] -> IO ()
+escreveArquivo file strs = writeFile file (show strs)
 
+leArquivo :: FilePath -> IO [String]
+leArquivo file = do 
+    conteudo <- readFile file
+    return (read conteudo::[String])
 
 --{-
 menu :: [String] -> IO ()
@@ -110,12 +116,21 @@ menu strings = do
       menu (remover strings line)
     "0" -> do
       putStrLn "Saindo..."
+      escreveArquivo nomeArquivo strings
     _ -> do
       putStrLn "Opção inválida. Tente novamente."
       menu strings
 ---}
 
-main = menu ["abc","def"]
+strs0 = ["abc","def"]
+
+--main = menu strs0
+
+nomeArquivo = "a.txt"
+
+main = do
+    conteudo <- leArquivo nomeArquivo
+    menu conteudo
 
 --------------------------------------------------
 
