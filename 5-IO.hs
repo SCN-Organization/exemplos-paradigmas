@@ -68,26 +68,29 @@ putList (a : as) = do putStr (show (a) ++ " ")
 
 --------------------------------------------------
 
-imprimeStrings :: [String] -> IO()
-imprimeStrings [] = putStrLn ""
-imprimeStrings (h:t) = do 
+listaStrings :: [String] -> IO()
+listaStrings [] = putStrLn ""
+listaStrings (h:t) = do 
                           putStrLn h  
-                          imprimeStrings t
+                          listaStrings t
 
 adicionar :: [String] -> String -> [String]
-adicionar strs str = str : strs
+adicionar existente novo = existente ++ [novo]
 
-removerPrimeiro :: [String] -> [String]
-removerPrimeiro [] = []
-removerPrimeiro (str:strs) = strs
+remover :: [String] -> String -> [String]
+remover [] _ = []
+remover (a:as) s | a == s = as
+                 | otherwise = a : (remover as s)
+
+
 
 --{-
 menu :: [String] -> IO ()
 menu strings = do
   putStrLn "Selecione uma opção:"
-  putStrLn "1 - Adicionar"
-  putStrLn "2 - Listar"
-  putStrLn "3 - Remover último"
+  putStrLn "1 - Adicionar string"
+  putStrLn "2 - Listar strings"
+  putStrLn "3 - Remove uma string"
   putStrLn "0 - Sair"
 
   opcao <- getLine
@@ -98,11 +101,13 @@ menu strings = do
       line <- getLine
       menu (adicionar strings line)
     "2" -> do
-      putStrLn "Strings atuais"
-      imprimeStrings strings
+      putStrLn "Strings atuais:"
+      listaStrings strings
       menu strings
     "3" -> do
-      menu (removerPrimeiro strings)
+      putStrLn "Digite a string que deseja remover"
+      line <- getLine
+      menu (remover strings line)
     "0" -> do
       putStrLn "Saindo..."
     _ -> do
@@ -111,8 +116,6 @@ menu strings = do
 ---}
 
 main = menu ["abc","def"]
-
-
 
 --------------------------------------------------
 
