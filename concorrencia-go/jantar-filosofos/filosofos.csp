@@ -1,0 +1,152 @@
+-- Jantar dos Filósofos
+
+-- Sidney Nogueira (adaptado para português do livro de Roscoe)
+
+-------------------------------------------------------------------------------
+-- Definindo filosofos e garfos
+-------------------------------------------------------------------------------
+
+-- N é o número de filósofos
+
+N = 2
+
+-- Identificacao dos filosofos e garfos
+
+IDS = {0..N-1}
+
+-- acoes de um filosofo que não dependem de sincronização
+
+channel senta, come, levanta : IDS
+
+-- acoes de pegar e devolver fazem parte da sincronização
+
+channel pega, devolve : IDS.IDS
+
+{-
+Ciclo de um filósofo : 
+  - senta
+  - pega garfo a sua direira (i)
+  - pega garfo a sua esquerda  (i+1)%N
+  - come
+  - devolve garfo a esquerda (i+1)%N
+  - devolve garfo a direita (i)
+  - levanta
+-}
+
+FILOSOFO(i)= senta.i -> 
+              pega.i.i -> pega.i.((i+1)%N) -> 
+              come.i -> 
+              devolve.i.((i+1)%N) -> devolve.i.i -> 
+              levanta.i -> FILOSOFO(i)
+
+-- Um garfo só pode ser pego pelo filosofo à sua direita 
+-- ou o filósofo à sua esquerda
+
+GARFO(i) = pega!((i-1)%N)!i -> devolve!((i-1)%N)!i -> GARFO(i)
+           []
+           pega!i!i -> devolve!i!i -> GARFO(i)
+
+----------------------------------  ---------------------------------------------
+-- Motando o jantar (usando paralelismo generalizado)
+-------------------------------------------------------------------------------
+
+-- a sintaxe para os operadores de FDR pode ser encontrado em 
+-- https://www.cs.ox.ac.uk/projects/fdr/manual/cspm/processes.html
+
+-- Existem várias formas de compor o jantar usando paralelismo. 
+
+GARFOS = ||| i:IDS @ GARFO(i)
+
+-- GARFOS = GARFO(0) ||| GARFO(1) ||| ... ||| GARFO(N-1) 
+
+FILOSOFOS = ||| i:IDS @ FILOSOFO(i) 
+
+-- FILOSOFOS = FILOSOFO(0) ||| FILOSOFO(1) ||| ... ||| FILOSOFO(N-1) 
+
+JANTAR1 = GARFOS [|{|pega, devolve|}|] FILOSOFOS
+
+-- quando N=2 temos que
+-- assert JANTAR1 [FD= G01_F01
+-- assert G01_F01 [FD= JANTAR1
+
+-------------------------------------------------------------------------------
+-- Verificando a possibilidade de deadlock
+-------------------------------------------------------------------------------
+
+-- O comando a seguir mostra que acontece deadlock no jantar
+
+assert JANTAR1 :[deadlock free]
+
+
+-------------------------------------------------------------------------------
+-- Resolvendo o problema do deadlock (Solução 1)
+-------------------------------------------------------------------------------
+
+-- Esta solução consiste em criar um processo garçom para garantir que 
+-- haverá uma cadeira vazia na mesa. Este processo impede que todos os 
+-- folósofos sentem. 
+
+GARCOM = GARCOM_(0)
+GARCOM_(sentados) = sentados<N-1 & senta?i -> GARCOM_(sentados+1)
+                    []
+                    sentados>0 & levanta?i -> GARCOM_(sentados-1)
+            
+
+JANTAR2 = JANTAR1 [|{|senta, levanta|}|] GARCOM
+
+assert JANTAR2 :[deadlock free]
+
+-------------------------------------------------------------------------------
+-- Resolvendo o problema do deadlock (Solução 2)
+-------------------------------------------------------------------------------
+
+-- Uma segunda soluçao é colocar um filósofo que pega o garfo esquerdo antes do
+-- direito. 
+
+FILOSOFO2(i)= senta.i -> 
+              pega.i.((i+1)%N) -> pega.i.i -> 
+              come.i -> 
+              devolve.i.i -> devolve.i.((i+1)%N) -> 
+              levanta.i -> FILOSOFO2(i)
+
+FILOSOFOS2 = ||| i : IDS @  if i==0  then 
+                              FILOSOFO2(i) 
+                            else 
+                              FILOSOFO(i)
+
+
+JANTAR3 = FILOSOFOS2 [|{|pega, devolve|}|] GARFOS
+
+-- Com FDR podemos comprovar que JANTAR3 é livre de deadlock
+
+assert JANTAR3 :[deadlock free [F]]
+
+-------------------------------------------------------------------------------
+-- Motando o jantar (usando paralelismo alfabetizado)
+-------------------------------------------------------------------------------
+
+-- Uma forma é criar pares (garfo, filosofo) e colocar estes pares em paralelo.
+-- Use o comando a seguir para ver em FDR o grafo de comunicação de JANTAR1
+-- :communication_graph JANTAR1
+
+-- Alfabeto de um filosofo
+
+aF(i) = {senta.i,pega.i.i,pega.i.(i+1)%N,come.i,devolve.i.(i+1)%N,devolve.i.i,levanta.i}
+
+ -- Alfabeto de um garfo
+
+aG(i) = {pega.i.i, pega.(i-1)%N.i, devolve.i.i, devolve.(i-1)%N.i}
+
+GARFO_FILOSOFO(i) = GARFO(i) [aG(i) || aF(i)] FILOSOFO(i)   
+ 
+JANTAR1' = || i:IDS @ [ union(aG(i),aF(i)) ] GARFO_FILOSOFO(i)                       
+
+-- para N = 2
+-- JANTAR1= GARFO_FILOSOFO(0) [union(aG(0),aF(0)) || union(aG(1),aF(1))] GARFO_FILOSOFO(1) 
+
+-- JANTAR e JANTAR1' são equivalentes. A seguir usamos o modelo FD 
+-- (Falhas e Divergência) por ser o mais completo 
+-- (inclui não determinismo, deadlock e divergência).
+
+assert JANTAR1 [FD= JANTAR1'
+assert JANTAR1' [FD= JANTAR1

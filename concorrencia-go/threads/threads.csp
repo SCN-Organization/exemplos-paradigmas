@@ -1,0 +1,225 @@
+
+-- Esta especificação modela um sistema com threads que acessam um recurso
+-- compartilhado. A constante CAPACIDADE, que define a quantidade 
+-- máxima de threads que podem acessar o recurso ao mesmo tempo. 
+-- A constante NUM define a quantidade de threads que vai disputar 
+-- o recurso.
+
+NUM = 3
+
+CAPACIDADE = 2
+
+-- O recurso é abstraido na especificação. O foco é no controle de 
+-- concorrência para garantir que apenas CAPACIDADE threads usem
+-- o recurso ao mesmo tempo. USANDO_RECURSO é o comportamento da thread
+-- quando usa o recurso.
+
+-- identificação das threads
+nametype IDS = {0..NUM-1}
+
+-------------------------------------------------------------------------------
+-- VARIAVEL COMPARTILHADA QUE CONTROLA ACESSO AO RECURSO 
+-------------------------------------------------------------------------------
+
+-- o processo VARIAVEL especifica uma variável que é compartilhada entre as 
+-- threads. O valor deste variável é usado para controlar a quantidade atual
+-- de threads que estão usando o recurso.
+
+
+max(a,b) = if (a > b) then a else b
+
+channel le,escreve : IDS.{0..max(CAPACIDADE,NUM)}
+
+VARIAVEL_INIT = VARIAVEL(0)
+VARIAVEL(valor) =  
+	le?id!valor -> VARIAVEL(valor)
+	[]
+	escreve?id?novo_valor -> VARIAVEL(novo_valor)
+
+-------------------------------------------------------------------------------
+-- ESPECIFICAÇÃO DAS THREADS COM CONTROLE DE CONCORRÊNCIA
+-------------------------------------------------------------------------------
+
+-- a solução consiste em delimitar uma região de acesso exclusivo para a leitura 
+-- e escrita do contador . No máximo uma thread vai acessar esta região por vez.
+
+channel entra_regiao_critica,sai_regiao_critica : IDS
+channel entrou,ficou,saindo,saiu : IDS
+channel foraLimite
+
+THREAD(id) = 
+	entra_regiao_critica!id ->
+	le!id?valor -> 
+	( 		
+		if(valor < CAPACIDADE) then (
+			entrou.id ->
+			escreve!id!(valor+1) -> 
+			sai_regiao_critica!id -> 
+			USANDO_RECURSO(id) 
+		) else (
+			sai_regiao_critica!id -> 
+			THREAD(id)
+		)
+	)
+
+USANDO_RECURSO(id) =
+	ficou.id -> USANDO_RECURSO(id)
+	[]
+	saindo.id -> SAIR(id)
+
+SAIR(id) =
+	entra_regiao_critica!id ->
+	le!id?valor -> 
+	( 		
+		if(valor > 0) then (
+			saiu.id ->
+			escreve!id!(valor-1) -> 
+			sai_regiao_critica!id -> 
+			THREAD(id) 
+		) else (
+			sai_regiao_critica!id -> 
+			foraLimite -> 
+			STOP
+		)
+	)
+
+
+THREADS = ||| id : IDS @ THREAD(id)
+
+-- esse processo tem o efeito de um semáforo binário quando em paralelo
+-- com um processo que faz entra_regiao_critica!id e sai_regiao_critica!id
+MUTEX = ( [] id : IDS @ entra_regiao_critica!id -> 
+	                    sai_regiao_critica!id -> MUTEX )
+
+{-
+
+Para N = 2
+
+MUTEX = entra_regiao_critica.0 -> sai_regiao_critica.0 -> MUTEX
+		[]
+		entra_regiao_critica.1 -> sai_regiao_critica.1 -> MUTEX
+-}
+
+-- o sistema só permita a entrada de uma thread for vez na regiao 
+-- crítica (leitura da variável)
+SISTEMA = (THREADS [|{|le,escreve|}|] VARIAVEL_INIT) 
+			[|{|entra_regiao_critica,sai_regiao_critica|}|] 
+		   MUTEX
+
+assert SISTEMA :[deadlock free]
+
+-------------------------------------------------------------------------------
+-- ESPECIFICAÇÃO DAS THREADS SEM CONTROLE DE CONCORRÊNCIA
+-------------------------------------------------------------------------------
+
+THREAD_(id) = 
+	le!id?valor -> 
+	( 		
+		if(valor < CAPACIDADE) then (
+			entrou.id ->
+			escreve!id!(valor+1) -> 
+			USANDO_RECURSO_(id) 
+		) else (
+			THREAD_(id)
+		)
+	)
+
+USANDO_RECURSO_(id) =
+	ficou.id -> USANDO_RECURSO_(id)
+	[]
+	saindo.id -> SAIR_(id)
+
+SAIR_(id) =
+	le!id?valor -> 
+	( 		
+		if(valor > 0) then (
+			saiu.id ->
+			escreve!id!(valor-1) -> 
+			THREAD_(id) 
+		) else (
+			foraLimite -> 
+			STOP
+		)
+	)
+
+
+THREADS_ = ||| id : IDS @ THREAD_(id)
+
+SISTEMA_ = (THREADS_ [|{|le,escreve|}|] VARIAVEL_INIT) 
+
+assert SISTEMA_ :[deadlock free]
+
+-------------------------------------------------------------------------------
+-- MONITORANDO ATUALIZAÇÃO DA VARIÁVEL
+-------------------------------------------------------------------------------
+
+-- canal utilizado para comunicar o acontecimento de atualizações não esperadas
+-- no valor do contador de threads que usam o recurso
+-- erro.0 - contador acima da capacidade máxima 
+-- erro.1 - contador atualizado para o mesmo valor
+-- erro.2 - contador foi decrementado em pelo menos duas unidades
+-- erro.3 - contador foi incrementado em pelo menos duas unidades
+channel erro : {0..3}
+
+-- monitora a escrita de valores para observar a ocorrência de um erro de 
+-- atualização
+MONITOR_INIT = MONITOR(0)
+MONITOR(anterior) = 
+    escreve?id?v -> 
+	if(v > CAPACIDADE) then (
+        erro.0 -> STOP	
+    ) else if (v == anterior) then (
+        erro.1 -> STOP
+    ) else if (v < anterior-1) then (
+        erro.2 -> STOP
+    ) else if (v > anterior+1) then (
+        erro.3 -> STOP
+    ) else (
+        MONITOR(v)
+    )
+
+SISTEMA_MONITORADO = SISTEMA [|{|escreve|}|] MONITOR_INIT
+
+-- espera-se que nenhum tipo de erro aconteça
+assert RUN(diff(Events,{erro.0})) [T= SISTEMA_MONITORADO
+assert RUN(diff(Events,{erro.1})) [T= SISTEMA_MONITORADO
+assert RUN(diff(Events,{erro.2})) [T= SISTEMA_MONITORADO
+assert RUN(diff(Events,{erro.3})) [T= SISTEMA_MONITORADO
+
+SISTEMA_MONITORADO_ = SISTEMA_ [|{|escreve|}|] MONITOR_INIT
+
+-- cada refinamento a seguir é usado para verificar se um tipo de erro pode 
+-- acontecer. Dependendo dos valores de CAPACIDADE e NUM diferentes erros 
+-- podem acontecer. Exemplos:
+--  	nenhum erro quando CAPACIDADE = 1 e NUM = 1
+-- 		erro.1 quando CAPACIDADE = 1 e NUM = 2
+--	    erros 1, 2 e 3 quando CAPACIDADE = 2 e NUM = 2
+assert RUN(diff(Events,{erro.0})) [T= SISTEMA_MONITORADO_
+assert RUN(diff(Events,{erro.1})) [T= SISTEMA_MONITORADO_
+assert RUN(diff(Events,{erro.2})) [T= SISTEMA_MONITORADO_
+assert RUN(diff(Events,{erro.3})) [T= SISTEMA_MONITORADO_
+
+-------------------------------------------------------------------------------
+
+SISTEMA_HIDING = SISTEMA \ {|entra_regiao_critica,sai_regiao_critica,escreve,le|}
+
+assert SISTEMA_HIDING :[livelock free ]
+
+assert SISTEMA_HIDING [T= ENTROU_DOIS
+assert SISTEMA_HIDING [T= ENTROU_TRES
+
+-------------------------------------------------------------------------------
+
+SISTEMA__HIDING = SISTEMA_ \ {|escreve,le|}
+
+assert SISTEMA__HIDING :[livelock free]
+
+-- especifica se é possível entrar dois ou três na região crítica quando N > 1
+ENTROU_DOIS = entrou?id1 -> entrou?id2:diff(IDS,{id1}) -> STOP
+
+-- especifica se é possível entrar dois ou três na região crítica quando N > 2
+ENTROU_TRES = entrou?id1 -> entrou?id2:diff(IDS,{id1}) -> entrou?id3:diff(IDS,{id1,id2}) -> STOP
+
+assert SISTEMA__HIDING [T= ENTROU_DOIS
+assert SISTEMA__HIDING [T= ENTROU_TRES
+

@@ -1,0 +1,136 @@
+N = 10 -- quantidade máxima de partes usadas para montar o produto
+
+channel faz : {0..N-1}
+channel monta, reinicia
+
+PRODUTOR(id_p) = faz!id_p -> reinicia -> PRODUTOR(id_p)
+
+PRODUTORES(n) = [|{reinicia}|] id : {0..n-1} @ PRODUTOR(id)
+
+MONTADOR(contador,n) =
+  if (contador == n) then
+    monta -> reinicia -> MONTADOR (0,n)
+  else
+    faz?id -> MONTADOR (contador+1,n)
+
+FABRICA(n) = PRODUTORES(n) [|{|faz,reinicia|}|] MONTADOR(0,n)
+
+-------------------------------------------------------------------------------
+
+PRODUTORES_3 =
+(
+faz.0 -> SKIP
+|||
+faz.1 -> SKIP
+|||
+faz.2 -> SKIP
+); reinicia -> PRODUTORES_3
+
+assert PRODUTORES_3 [FD= PRODUTORES(3) 
+assert PRODUTORES(3) [FD= PRODUTORES_3
+
+-------------------------------------------------------------------------------
+
+FABRICA_SEQUENCIAL1 = faz.0 -> monta -> reinicia -> FABRICA_SEQUENCIAL1
+
+assert FABRICA(1) [FD= FABRICA_SEQUENCIAL1
+assert FABRICA_SEQUENCIAL1 [FD= FABRICA(1)
+
+-------------------------------------------------------------------------------
+
+FABRICA_SEQUENCIAL2 =
+faz.0 -> faz.1 -> monta -> reinicia -> FABRICA_SEQUENCIAL2
+[]
+faz.1 -> faz.0 -> monta -> reinicia -> FABRICA_SEQUENCIAL2
+
+assert FABRICA(2) [FD= FABRICA_SEQUENCIAL2
+assert FABRICA_SEQUENCIAL2 [FD= FABRICA(2)
+
+-------------------------------------------------------------------------------
+
+FABRICA_3 =
+(
+faz.0 -> SKIP
+|||
+faz.1 -> SKIP
+|||
+faz.2 -> SKIP
+); monta -> reinicia -> FABRICA_3
+
+assert FABRICA_3 [FD= FABRICA(3) 
+assert FABRICA(3) [FD= FABRICA_3
+
+-------------------------------------------------------------------------------
+
+assert FABRICA(3) :[has trace]: <faz.2,
+faz.1,
+faz.0,
+monta,
+reinicia,
+faz.0,
+faz.2,
+faz.1,
+monta,
+reinicia,
+faz.0,
+faz.0,
+faz.1,
+monta,
+reinicia,
+faz.0,
+faz.2,
+faz.1,
+monta,
+reinicia,
+faz.0,
+faz.2,
+faz.1,
+monta,
+reinicia,
+faz.2,
+faz.1,
+faz.0,
+monta,
+reinicia,
+faz.1,
+faz.2,
+faz.0,
+monta,
+reinicia,
+faz.0,
+faz.1,
+faz.2,
+monta,
+reinicia,
+faz.0,
+faz.2,
+faz.1,
+monta,
+reinicia,
+faz.2,
+faz.1,
+faz.0,
+monta,
+reinicia,
+faz.1,
+faz.0,
+faz.2,
+monta,
+reinicia,
+faz.0,
+faz.1,
+faz.2,
+monta,
+reinicia,
+faz.1,
+faz.2,
+faz.0,
+monta,
+reinicia,
+faz.0,
+faz.1,
+faz.2,
+monta,
+reinicia,
+faz.1,
+faz.0>

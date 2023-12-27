@@ -1,0 +1,166 @@
+include "filosofos.csp"
+
+
+{-
+
+Versão do jantar dos filosofos usando um buffer para controlar o acesso aos garfos.
+
+Cada garfo é representado por um buffer com tamanho 1. Quando um filósofo pega o
+garfo enche o buffer. Quando um filósofo devolve o garfo esvazia o buffer.
+
+O comportamento da rede é diferente da versão sem buffer, os eventos pega/devolve 
+antes tinham a função de controlar o acesso aos garfos. Agora os eventos 
+garfo_in/garfo_out é que controlam o acesso aos garfos. Este eventos modelam as 
+operações de colocar/tirar no buffer. 
+
+-}
+
+-------------------------------------------------------------------------------
+-- O buffer a seguir modela o comportamento de um canal em Go
+-- A comunicação de cada canal é indexada por um inteiro que é seu id
+-------------------------------------------------------------------------------
+
+IDS_CANAIS = IDS
+
+DATA = {0}
+
+-- in representa colocar em um canal id
+-- out representa tirar do canal id
+channel in, out : IDS_CANAIS.DATA 
+
+B(id,s,N)  = 
+  #s < N & in.id?x -> B(id,s^<x>,N)
+  []
+  #s > 0 & out.id!head(s) -> B(id,tail(s),N)
+
+-------------------------------------------------------------------------------
+-- Versão do filósofo que usa buffer para controlar acesso ao garfo
+-------------------------------------------------------------------------------
+
+-- garfo_in.0 e garfo_out.0 representam colocar e tirar valor do canal garfo
+-- garfo_in.1.0 representa garfo[1] <- 0
+-- garfo_out.1?v representa v:= <- garfo[1]
+channel garfo_in, garfo_out : IDS.DATA
+
+GARFOB(id,s,N) = B(id,s,N) [[in.id.v <- garfo_in.id.v, 
+                              out.id.v <- garfo_out.id.v | v <- DATA]]
+
+{-
+o operador de renomear de CSP [[R]] onde R é uma relação de mapeamento dos 
+nomes dos eventos é usado a seguir para fazer com que o processo B original
+se transforme no processo a seguir
+
+B(id,s,N)  = 
+  #s < N & garfo_in.id?x -> B(id,s^<x>,N)
+  []
+  #s > 0 & garfo_out.id!head(s) -> B(id,tail(s),N)
+-}
+
+FILOSOFOB(i)= senta.i -> 
+              garfo_in.i.0 -> pega.i.i -> 
+              garfo_in.(i+1)%N.0 -> pega.i.(i+1)%N -> 
+              come.i -> 
+              garfo_out.(i+1)%N?v -> devolve.i.(i+1)%N -> 
+              garfo_out.i?v -> devolve.i.i -> 
+              levanta.i -> FILOSOFOB(i)
+
+-------------------------------------------------------------------------------
+-- Motando o jantar
+-------------------------------------------------------------------------------
+
+GARFOSB = ||| i:IDS @ GARFOB(i,<>,1)
+
+FILOSOFOSB = ||| i:IDS @ FILOSOFOB(i) 
+
+JANTARB1 = ( GARFOSB [|{|garfo_in,garfo_out|}|] FILOSOFOSB ) \ {|garfo_in,garfo_out|}
+
+-------------------------------------------------------------------------------
+-- Verificando a possibilidade de deadlock
+-------------------------------------------------------------------------------
+
+-- O comando a seguir mostra que acontece deadlock no jantar
+assert JANTARB1 :[deadlock free]
+
+-- a versão com deadlock dos filosofos com buffer é diferente da versão sem buffer
+assert not JANTARB1 [FD= JANTAR1
+assert not JANTAR1 [FD= JANTARB1
+
+-------------------------------------------------------------------------------
+-- Resolvendo o problema do deadlock
+------------------------------------------------------------------------------- 
+
+FILOSOFOB2(i)= senta.i -> 
+              garfo_in.(i+1)%N.0 -> pega.i.(i+1)%N-> 
+              garfo_in.i.0 -> pega.i.i -> 
+              come.i -> 
+              garfo_out.i?v -> devolve.i.i -> 
+              garfo_out.(i+1)%N?v -> devolve.i.(i+1)%N -> 
+              levanta.i -> FILOSOFOB2(i)
+
+FILOSOFOSB2 = ||| i : IDS @  if i==0 then 
+                              FILOSOFOB2(i) 
+                            else 
+                              FILOSOFOB(i)
+
+
+JANTARB2 = ( GARFOSB [|{|garfo_in,garfo_out|}|] FILOSOFOSB2 ) \ {|garfo_in,garfo_out|}
+
+-- Com FDR podemos comprovar que JANTAR3 é livre de deadlock
+assert JANTARB2 :[deadlock free]
+
+-- a versão com deadlock dos filosofos com buffer é diferente da versão sem buffer
+assert not JANTARB2 [FD= JANTAR2
+assert not JANTAR2 [FD= JANTARB2
+
+-------------------------------------------------------------------------------
+-- Verificando se traces do programa filosofos-buffered.go estão na especificação
+------------------------------------------------------------------------------- 
+
+TRACE_TO_PROC(<>) = STOP
+TRACE_TO_PROC(s) = head(s) -> TRACE_TO_PROC(tail(s))
+
+assert JANTARB1 [T= TRACE_GO1
+
+TRACE_GO1 = TRACE_TO_PROC(<senta.0,
+senta.2,
+senta.1,
+pega.0.0,
+pega.2.2,
+pega.1.1>)
+
+assert JANTARB2 [T= TRACE_GO2
+
+TRACE_GO2 = TRACE_TO_PROC(<senta.0,
+senta.2,
+senta.1,
+pega.1.1,
+pega.2.2,
+pega.2.0,
+come.2,
+devolve.2.0,
+pega.1.2,
+devolve.2.2,
+come.1,
+levanta.2,
+senta.2,
+devolve.1.2,
+pega.0.1,
+devolve.1.1,
+pega.2.2,
+pega.0.0,
+levanta.1,
+senta.1,
+come.0,
+devolve.0.0,
+pega.2.0,
+come.2,
+devolve.0.1,
+pega.1.1,
+levanta.0,
+devolve.2.0,
+devolve.2.2,
+senta.0,
+pega.1.2>)
+
+
+
