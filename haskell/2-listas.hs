@@ -71,6 +71,12 @@ maiorLista [1,3,2]
 
 -}
 
+{-
+replicateChar :: Int -> Char -> String
+replicateChar 0 ch = []
+replicateChar n ch = ch : (replicateChar (n−1) ch)
+-}
+
 ehDigito :: Char -> Bool
 ehDigito ch = ('0' <= ch) && (ch <= '9')
  
@@ -107,30 +113,6 @@ rev [] ++ [3] ++ [2] ++ [1] =
 [] ++ [3] ++ [2] ++ [1] =
 [3,2,1]
 -}
-
--------------------------------------------------------------------------------
-
-
-type Pessoa = String
-type Livro = String
-type BancoDados = [(Pessoa,Livro)]
-
-baseExemplo :: BancoDados
-baseExemplo = [("Sergio","O Senhor dos Aneis"), ("Andre", "Duna"), ("Fernando", "Jonathan Strange & Mr. Norrell"), ( "Fernando" , "Duna" ) ]
-
-
--- retorna as pessoas que pegaram emprestado um determinado livro
---{-
-emprestimos :: BancoDados -> Livro -> [Pessoa]
-emprestimos [] l = [] 
-emprestimos ((p,l2):as) l1 | (l2 == l1) = p : emprestimos as l1
-                           | otherwise = emprestimos as l1
-emprestimos2 b l = [p | (p,l1) <- baseExemplo, l1 == l]
----}
-
--- retorna todos os livros que estão na base
-livros :: BancoDados -> Pessoa -> [Livro]
-livros bd pessoa = [l | (p, l) <- bd, p == pessoa]
 
 -------------------------------------------------------------------------------
 
