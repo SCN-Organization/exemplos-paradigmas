@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Exemplo de código JavaScript</h2>
+
+<pre>
+
+function big() {
+	function sub1() {
+		var x = 7;
+		sub2();
+	}
+	function sub2() {
+		var y = x;
+	}
+	var x = 3;
+	sub1();
+}
+
+
+</pre>
+
+<h2>Ao imprimir o valor de Vetor em cada atribuição temos</h2>
+
+
+<p id="p1"></p>
+<p id="p2"></p>
+
+<script>
+
+function big() {
+
+	function sub1() {
+		console.log("sub1: x="+x);
+		var x = 7;
+		console.log("sub1: x="+x);
+		sub2();
+	}
+	
+	function sub2() {
+		console.log("sub2: x="+x);
+		var y = x;
+	}
+
+	console.log("big: x="+x);
+
+	var x = 3;
+
+	console.log("big: x="+x);
+	
+	sub1();
+	
+	console.log("big: x="+x);
+
+}
+
+big()
+
+console.log("big: x="+x);
+var x = 3;
+console.log("big: x="+x);
+
+//document.getElementById("p1").innerHTML = Vetor;  
+
+
+</script>
+
+</body>
+</html>
