@@ -12,24 +12,6 @@ const (
 	maxQueueSize = 5
 )
 
-func main() {
-	queue := make(chan int, maxQueueSize)
-
-	for i := 0; i < numProducers; i++ {
-		go producer(i, queue)
-	}
-
-	for i := 0; i < numConsumers; i++ {
-		go consumer(i, queue)
-	}
-
-	// Allow some time for producers and consumers to run
-	time.Sleep(time.Second * 5)
-
-	close(queue)
-	fmt.Println("All producers and consumers are done.")
-}
-
 func producer(id int, queue chan<- int) {
 	for {
 		value := rand.Intn(100)
@@ -50,3 +32,22 @@ func consumer(id int, queue <-chan int) {
 		time.Sleep(time.Millisecond * time.Duration(rand.Intn(800)))
 	}
 }
+
+func main() {
+	queue := make(chan int, maxQueueSize)
+
+	for i := 0; i < numProducers; i++ {
+		go producer(i, queue)
+	}
+
+	for i := 0; i < numConsumers; i++ {
+		go consumer(i, queue)
+	}
+
+	// Allow some time for producers and consumers to run
+	time.Sleep(time.Second * 5)
+
+	close(queue)
+	fmt.Println("All producers and consumers are done.")
+}
+

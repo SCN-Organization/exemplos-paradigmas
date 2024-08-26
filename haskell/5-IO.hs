@@ -114,9 +114,11 @@ menu strings = do
       putStrLn "Digite a string que deseja remover"
       line <- getLine
       menu (remover strings line)
+
     "0" -> do
       putStrLn "Saindo..."
       escreveArquivo nomeArquivo strings
+    
     _ -> do
       putStrLn "Opção inválida. Tente novamente."
       menu strings
@@ -128,10 +130,11 @@ strs0 = ["abc","def"]
 
 nomeArquivo = "a.txt"
 
+{-
 main = do
     conteudo <- leArquivo nomeArquivo
     menu conteudo
-
+-}
 --------------------------------------------------
 
 manipulaArquivo = do

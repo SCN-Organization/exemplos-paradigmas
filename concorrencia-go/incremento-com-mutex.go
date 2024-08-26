@@ -8,7 +8,7 @@ import (
 
 var counter int = 0
 var c chan int
-var counter2 int = 0
+var counter2 int = 0 //quantas threads concluiram
 
 func delayTime(limit int) int {
     return rand.Intn(limit)
@@ -28,12 +28,13 @@ func main() {
 
     c = make(chan int, 1)
 
-    go thread1()
-    go thread1()
-    go thread1()
-    go thread1()
+    N := 4
 
-    for counter2 < 4 {
+    for i:=0; i<N; i++{
+        go thread1()
+    }
+
+    for counter2 < N {
         time.Sleep(100 * time.Millisecond)
     }
 

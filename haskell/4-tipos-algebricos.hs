@@ -75,7 +75,7 @@ eval (Sub e1 e2) = (eval e1) - (eval e2)
 eval (Mul e1 e2) = (eval e1) * (eval e2)
 
 -- eval (Add (Lit 10) (Lit 10))
--- eval (Sub (Add (10) (20)) (Lit 30))
+-- eval (Sub (Add (Lit 10) (Lit 20)) (Lit 30))
 -- eval (Mul (Lit 10) (Lit 20))
 
 -- eval (Add (Lit 10) (Sub (Lit 20) (Lit 30)))
@@ -92,8 +92,8 @@ data Pairs t = Pair t t
 data List t = Nil | Cons t (List t)
 
 -- :t Nil -- ([])
--- :t (Cons 1 (Nil)) -- (1:[])
--- :t (Cons 1 (Cons 2 Nil)) -- (1:(2:[]))
+-- :t (Cons 1 (Nil)) -- (1:[]) == [1]
+-- :t (Cons 1 (Cons 2 Nil)) -- (1:(2:[])) = [1,2]
 -- :t (Cons 1 (Cons 2 (Cons 3 Nil))) -- ([1,2,3])
 
 -- :t (Cons [1] (Nil))
@@ -158,6 +158,9 @@ postOrder (Node v l r) = postOrder(l) ++ postOrder(r) ++ [v]
 
 --
 
+--
+-- função que retorna o tipo Maybe t, onde t é o tipo do valor que talvez seja retornado
+-- Maybe t possui d: Nothing se não houver resultado, ou, Maybe t
 safeDivide :: Int -> Int -> Maybe Int
 safeDivide _ 0 = Nothing
 safeDivide x y = Just (x `div` y)
@@ -171,6 +174,9 @@ result2 = safeDivide 8 0  -- Resultado: Nothing
 
 --
 
+-- função que retorna "dois tipos" diferentes
+-- tipo Either t1 t2 permite retornar até dois tipos como valor da resposta
+-- os valores da resposta são do tipo Left t1 ou Right t2
 divisibleBy :: Int -> Int -> Either String Bool
 divisibleBy _ 0 = Left "Divisor nao pode ser zero!"
 divisibleBy x y = Right (x `mod` y == 0)

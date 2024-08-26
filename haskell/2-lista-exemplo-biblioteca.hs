@@ -16,7 +16,7 @@ emprestimos [] l = []
 emprestimos ((p,l2):as) l1 | (l2 == l1) = p : emprestimos as l1
                            | otherwise = emprestimos as l1
 
-emprestimos2 b l1 = [p | (p,l2) <- baseExemplo, l1 == l2]
+emprestimos2 b l1 = [p | (p,l2) <- b, l1 == l2]
 ---}
 
 -- retorna todos os livros que estão na base
@@ -31,6 +31,7 @@ qtdEmprestimos b p = length (livros b p)
 
 emprestar :: BancoDados -> Pessoa -> Livro -> BancoDados
 emprestar b p l = (p,l):b
+--emprestar b p l = b ++ [(p,l)]
 
 devolver :: BancoDados -> Pessoa -> Livro -> BancoDados
 devolver b p l = [ (p2,l2) | (p2,l2)<-b, p2/=p || l2 /=l ]

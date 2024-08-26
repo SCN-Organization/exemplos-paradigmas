@@ -11,6 +11,7 @@ int delay_time(int limit) {
 }
 
 void *thread1(void *tno) {
+    
     pthread_mutex_lock(&mutex); // inicio da região crítica
     int x = counter;
     //printf("thread1 x = %d\n", x);    
