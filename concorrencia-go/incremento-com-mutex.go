@@ -6,8 +6,8 @@ import (
     "time"
 )
 
-var counter int = 0
-var c chan int
+var c chan int //canal usado como mutex
+var counter int = 0 //variável compartilhada
 var counter2 int = 0 //quantas threads concluiram
 
 func delayTime(limit int) int {
@@ -34,6 +34,7 @@ func main() {
         go thread1()
     }
 
+    //laço que espera as threads concluirem
     for counter2 < N {
         time.Sleep(100 * time.Millisecond)
     }

@@ -1,17 +1,16 @@
-package criandoThreads;
+package A_criandoThreads;
 
 import java.io.IOException;
-import static java.lang.Thread.sleep;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ThreadInterface implements Runnable {
+public class ThreadHeranca extends Thread {
 
-    private final Appendable buffer;
+    Appendable bufffer;
     private final String texto;
 
-    public ThreadInterface(Appendable buf, String texto) {
-        this.buffer = buf;
+    public ThreadHeranca(Appendable buf, String texto) {
+        this.bufffer = buf;
         this.texto = texto;
     }
 
@@ -19,9 +18,9 @@ public class ThreadInterface implements Runnable {
     public void run() {
         for (int i = 0; i < 5; i++) {
             try {
-                buffer.append(texto);
+                bufffer.append(texto);
             } catch (IOException ex) {
-                Logger.getLogger(ThreadInterface.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ThreadHeranca.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {
                 sleep((long) Math.random());
@@ -31,5 +30,4 @@ public class ThreadInterface implements Runnable {
     }
 
    
-
 }

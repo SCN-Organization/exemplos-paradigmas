@@ -1,4 +1,4 @@
-package cooperacaoWaitNotify;
+package D_cooperacaoWaitNotify;
 
 
 public class BufferWaitNotify {

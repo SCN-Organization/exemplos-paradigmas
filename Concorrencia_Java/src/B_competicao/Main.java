@@ -1,4 +1,4 @@
-package competicao;
+package B_competicao;
 
 public class Main {
 

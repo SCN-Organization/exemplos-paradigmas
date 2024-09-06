@@ -1,4 +1,4 @@
-package cooperacaoSemaforo;
+package C_cooperacaoSemaforo;
 
 public class Main {
 

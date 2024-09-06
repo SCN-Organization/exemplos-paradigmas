@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package criandoThreads;
+package A_criandoThreads;
 
 /**
  *
@@ -12,8 +12,8 @@ public class MainHeranca {
 
     public static void main(String[] args) {
         
-        //StringBuilder buffer = new StringBuilder();//não é thread safe
-        StringBuffer buffer = new StringBuffer();//é thread safe
+        StringBuilder buffer = new StringBuilder();//não é thread safe
+        //StringBuffer buffer = new StringBuffer();//é thread safe
         
         ThreadHeranca her1 = new ThreadHeranca(buffer, "thread 1\n");
         ThreadHeranca her2 = new ThreadHeranca(buffer, "thread 2\n");

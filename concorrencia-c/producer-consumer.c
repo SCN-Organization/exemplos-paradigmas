@@ -42,7 +42,7 @@ void *consumer(void *cno)
     for(int i = 0; i < MaxItems; i++) {
         sem_wait(&full);//waits for non empty cells and decrements 
         pthread_mutex_lock(&mutex);
-        int item = buffer[out];
+        int item = buffer[out]; //consumes
         printf("Consumer %d: Remove Item %d from %d\n",*((int *)cno),item, out);
         out = (out+1)%BufferSize;
         pthread_mutex_unlock(&mutex);

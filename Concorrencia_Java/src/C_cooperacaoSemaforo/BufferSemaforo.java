@@ -1,9 +1,12 @@
-package cooperacaoSemaforo;
+package C_cooperacaoSemaforo;
 
 import java.util.concurrent.Semaphore;
 
 /**
  * Similar a classe BufferWaitNotify porém usa Semáforo no lugar de wait/notify
+ *
+ * Inserir só acontece quando existe espaço no buffer.
+ * Esvaziar só acontece quando o buffer está cheio.
  * @author sidneynogueira
  */
 public class BufferSemaforo {
@@ -30,7 +33,7 @@ public class BufferSemaforo {
 
     public String esvaziar() {
         try {
-            semaforo.acquire();
+            semaforo.acquire();//equivale ao wait
         } catch (InterruptedException ie) {
         }
         tam = 0;

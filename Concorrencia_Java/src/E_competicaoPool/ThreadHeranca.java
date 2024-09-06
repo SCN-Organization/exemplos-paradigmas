@@ -1,4 +1,4 @@
-package competicaoPool;
+package E_competicaoPool;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
