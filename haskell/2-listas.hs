@@ -4,6 +4,7 @@ import Data.Char (isDigit)
 -- head:tail
 -- umElemento:umaLista
 
+-- na biblioteca existe a função sum
 sumList :: [Int] -> Int
 sumList [] = 0
 sumList (a:as) = a + sumList as
@@ -28,11 +29,13 @@ double [1,2]
 [2,4]
 -}
 
+-- na biblioteca existe a função elem
 member :: Int -> [Int] -> Bool
 member x [] = False
 member x (a:as) | (x == a) = True
                 | otherwise = member x as
 
+-- na biblioteca existe a função maximum
 maiorLista :: [ Int ] -> Int 
 maiorLista [] = minBound :: Int
 --maiorLista [x] = x
@@ -89,6 +92,7 @@ removeFirst :: [t] -> [t]
 removeFirst [] = []
 removeFirst (a:as) = as
 
+-- remove todas as ocorrências do elemento
 remove :: Int -> [Int] -> [Int]
 remove x [] = []
 remove x (a:as) | x == a = remove x as

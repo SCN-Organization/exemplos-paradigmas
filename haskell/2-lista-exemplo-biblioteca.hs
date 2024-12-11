@@ -17,6 +17,11 @@ emprestimos ((p,l2):as) l1 | (l2 == l1) = p : emprestimos as l1
                            | otherwise = emprestimos as l1
 
 emprestimos2 b l1 = [p | (p,l2) <- b, l1 == l2]
+
+emprestimos3 [] l = [] 
+emprestimos3 ((p,l2):as) l1 = if (l2 == l1) then p : emprestimos as l1
+                                else emprestimos as l1
+
 ---}
 
 -- retorna todos os livros que estão na base

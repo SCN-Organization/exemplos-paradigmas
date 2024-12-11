@@ -19,6 +19,8 @@ maxi :: Int -> Int -> Int
 maxi n m | n >= m    = n
          | otherwise = m
 
+maxi2 m n = if n>=m then n else m 
+
 maior :: Int -> Int -> Int -> Int
 maior a b c = maxi a (maxi b c)
 
@@ -65,6 +67,7 @@ maxVendas n
   | n == 0    = vendas 0
   | otherwise = maxi (maxVendas (n-1)) (vendas n)
 
+-- maximum seq retorna o máximo de uma sequência  
 
 maxVendas2 :: Int -> Int
 maxVendas2 0 = vendas 0
@@ -184,5 +187,15 @@ agenda = [("Fulano",18,976948594),("Beltrano", 22, 987894095)]
 name :: Person -> Name 
 name (n,a,p) = n
 
+cabecalho = "Semana  Vendas"
+
+vendaSemana :: Int -> String
+vendaSemana n = addEspacos 3 ++ show n ++ addEspacos 3 ++ show (vendas n) 
+
+resumoVendas :: Int -> String
+resumoVendas 0 =  cabecalho ++ "\n" ++ vendaSemana 0 ++ "\n"
+resumoVendas n = resumoVendas (n-1) ++ "\n" ++ vendaSemana n 
+
+
 main = do
-  putStrLn ""
+  putStrLn (resumoVendas 1)

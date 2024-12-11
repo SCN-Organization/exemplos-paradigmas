@@ -15,15 +15,15 @@ getNput = do
 
 --------------------------------------------------
 
-{-
 
+{-
 main = do putStr "Digite seu nome:"
           st <- getLine
           putStr ("O inverso de " ++ st ++ " ´e ")
           putStr (reverse st)
           putStr "\n"
-
 -}
+
 
 --------------------------------------------------
 
@@ -74,9 +74,6 @@ listaStrings (h:t) = do
                           putStrLn h  
                           listaStrings t
 
-adicionar :: [String] -> String -> [String]
-adicionar existente novo = existente ++ [novo]
-
 remover :: [String] -> String -> [String]
 remover [] _ = []
 remover (a:as) s | a == s = as
@@ -105,10 +102,10 @@ menu strings = do
     "1" -> do
       putStrLn "Digite uma string para adicionar"
       line <- getLine
-      menu (adicionar strings line)
+      menu (strings ++ [line])
     "2" -> do
       putStrLn "Strings atuais:"
-      listaStrings strings
+      putStrLn $ show (strings)
       menu strings
     "3" -> do
       putStrLn "Digite a string que deseja remover"
@@ -128,13 +125,13 @@ strs0 = ["abc","def"]
 
 --main = menu strs0
 
-nomeArquivo = "a.txt"
+nomeArquivo = "b.txt"
 
-{-
+--{-
 main = do
     conteudo <- leArquivo nomeArquivo
     menu conteudo
--}
+---}
 --------------------------------------------------
 
 manipulaArquivo = do
@@ -171,3 +168,10 @@ escreveLePares = do
   print pairsFromFile
 
 --main = escreveLePares
+
+{-
+main = do
+  putStrLn "Primeira linha"
+  putStrLn "Segunda linha"
+-}
+

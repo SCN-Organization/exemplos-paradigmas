@@ -23,7 +23,7 @@ clima _ = Quente
 
 type Nome = String
 type Idade = Int
-data Pessoas = Pessoa Nome Idade
+data Pessoas = Pessoa Nome Idade deriving (Show)
 
 -- :t Pessoa
 -- Pessoa :: Nome -> Idade -> Pessoas
@@ -44,6 +44,11 @@ isEqual (Pessoa n1  i1) (Pessoa n2 i2) | (n1 == n2 && i1 == i2) = True
 
 data Shape = Circle Float 
         | Rectangle Float Float
+
+instance Eq Shape where
+    (Circle r1) == (Circle r2) = r1 == r2
+    (Rectangle l1 l2) == (Rectangle l3 l4) = l1 == l3 && l2 == l4
+    _ == _ = False  -- Formas diferentes não são iguais
 
 -- :t Circle 4.9
 --Circle 4.9 :: Shape

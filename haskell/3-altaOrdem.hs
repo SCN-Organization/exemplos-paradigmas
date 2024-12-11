@@ -6,6 +6,9 @@ inverteSinal x = x * (-1)
 rev [] = []
 rev (a : as) = rev as ++ [a]
 
+duplica :: Int -> Int
+duplica x = x+x
+
 vendas :: Int -> Int
 vendas 0 = 100
 vendas 1 = 50
