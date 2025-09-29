@@ -1,5 +1,7 @@
 package B_competicao;
 
+import static java.lang.Thread.sleep;
+
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
@@ -15,6 +17,11 @@ public class Main {
         }
         
         for (int i = 0; i < 10; i++) {
+            try {
+                sleep(300);            
+                //sleep((long) Math.random());
+            } catch (InterruptedException ie) {//se chegar mensagem para interromper sono
+            }
             System.out.println(i + ": " + buffer.toString());
         }
         

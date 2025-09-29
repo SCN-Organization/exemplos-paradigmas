@@ -7,7 +7,7 @@
 
 /*
 This program provides a possible solution for producer-consumer problem using mutex and semaphore.
-I have used 5 producers and 5 consumers to demonstrate the solution. You can always play with these values.
+The for illustration purposes, we use the same number for producers and consumers.
 */
 
 #define MaxItems 5 // Maximum items a producer can produce or a consumer can consume
@@ -21,6 +21,9 @@ pthread_mutex_t mutex;
 int buffer[BufferSize];
 int in = 0;//index for inserting
 int out = 0;//index for removing
+
+//in : 0,1,2,..,BufferSize-1,0,1,2,..,BufferSize-1,...
+//in = (in+1)%BufferSize;
 
 void *producer(void *pno)
 {   

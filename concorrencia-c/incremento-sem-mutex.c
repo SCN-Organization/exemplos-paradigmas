@@ -5,12 +5,14 @@
 
 int counter = 0;
 
-int delay_time(int limit) { return rand() % limit; }
+int delay_time(int limit) { 
+  return rand() % limit; 
+}
 
 void *thread1(void *tno) {
   int x = counter;
   // printf("t1 x = %d\n", x);
-  usleep(delay_time(200)); // 200ms de delay
+  usleep(delay_time(200)); //comente esta linha para ver contador = 2
   counter = x + 1;
   return 0;
 }

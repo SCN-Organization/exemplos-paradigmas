@@ -28,7 +28,7 @@ func main() {
 
     c = make(chan int, 1)
 
-    N := 4
+    N := 2
 
     for i:=0; i<N; i++{
         go thread1()

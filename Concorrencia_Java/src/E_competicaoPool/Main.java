@@ -24,9 +24,9 @@ public class Main {
             threads[i].start();
         }
         
-        for (Thread thread : threads) {
-            thread.join();
-        }
+        //for (Thread thread : threads) {
+        //    thread.join();
+        //}
 
     }
 }

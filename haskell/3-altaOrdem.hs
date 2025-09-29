@@ -42,7 +42,7 @@ sumSquares n = total sqr n
 
 isCrescent :: (Int -> Int) -> Int -> Bool
 isCrescent f 0 = True
-isCrescent f n = f (n) > f (n -1) && isCrescent f (n -1)
+isCrescent f n = f (n) > f (n-1) && isCrescent f (n -1)
 
 maxFun :: (Int -> Int) -> Int -> Int
 maxFun f 0 = f 0
@@ -63,6 +63,10 @@ map f (a:as) = f a : map f as
 snd :: (t,u) -> u
 snd (a,b) = b
 -}
+
+double :: [Int] -> [Int]
+double [] = []
+double (a:ax) = (2*a) : double ax 
 
 -- no slide esta função se chama double
 doubleList xs = map times2 xs 

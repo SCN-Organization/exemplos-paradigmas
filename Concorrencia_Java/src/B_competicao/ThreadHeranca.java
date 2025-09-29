@@ -15,7 +15,8 @@ public class ThreadHeranca extends Thread {
         for (int i = 0; i < 5; i++) {
             
             try {
-                sleep((long) Math.random());
+                sleep((long) 100);
+                //sleep((long) Math.random());
             } catch (InterruptedException ie) {//se chegar mensagem para interromper sono
             }
 

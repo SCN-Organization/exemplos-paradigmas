@@ -36,14 +36,22 @@ vendas 0 = 20
 vendas 1 = 50
 vendas 2 = 30
 vendas 3 = 50 
-vendas n = n*2
+--vendas n = n*2
+
+{-
+vendas n | (n == 0) = 20
+         | (n == 1) = 50
+         | (n == 2) = 30
+         | (n == 3) = 50
+         | otherwise = n*2
+-}
 
 acimaMedia :: Int -> Int
 acimaMedia n = let 
                   media = div (totalVendas n) (n+1)
-                  contaMedia -1 = 0
-                  contaMedia n | (n > media) = 1 + contaMedia (n-1)
-                               | otherwise = 0 + contaMedia (n-1)
+                  contaMedia (-1) = 0
+                  contaMedia n | (vendas n > media) = 1 + contaMedia (n-1)
+                               | otherwise = contaMedia (n-1)
                in 
                   contaMedia n
 
@@ -55,12 +63,6 @@ vendasIguais v n  | (vendas n == v) = 1 + vendasIguais v (n-1)
 totalVendas :: Int -> Int
 totalVendas n | n == 0    = vendas 0
               | otherwise = totalVendas (n-1) + vendas n
-
-f :: Int -> Int
-f n | n == 0    = 10
-    | n == 1    = 20
-    | otherwise = n
-
 
 maxVendas :: Int -> Int
 maxVendas n

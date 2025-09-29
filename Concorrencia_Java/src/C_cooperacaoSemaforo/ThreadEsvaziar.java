@@ -12,8 +12,7 @@ public class ThreadEsvaziar extends Thread {
     public void run() {
         String result;
         for (int i = 0; i < 10; i++) {
-
-            result = buf.esvaziar();
+            result = buf.esvaziar();//só esvazia quando está cheio
             System.out.println("\n\nImpressao # " + (i + 1) + ":\n Buffer = "
                     + result + " -> Tamanho: " + result.length());
         }

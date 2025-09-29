@@ -1,6 +1,6 @@
 //não precisa de include em https://pythontutor.com/c.html#mode=edit  
 
-void f1(){
+void f1(char c){
   int x = 10; //stack-dynamic
   printf("x = %d\n", x);
 }
@@ -23,8 +23,8 @@ void f3(){
 }
 
 int main() {
-  f1();   
-  f1();
+  f1('a');   
+  f1('b');
   printf("y = %d\n", f2());
   printf("y = %d\n", f2());
   f3();

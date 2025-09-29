@@ -1,8 +1,17 @@
+import Control.Exception (evaluate)
+import System.Directory (doesFileExist)
+
 
 writefoo :: IO ()
 writefoo = putStrLn "foo"
 
 --main = do writefoo
+
+f = do
+  putStrLn "Ola"
+  putStr "Mundo!"
+  line <- getLine -- v <- IO (String), type(v) == String
+  putStr ("Meu amigo " ++ line )
 
 --------------------------------------------------
 
@@ -61,8 +70,8 @@ putNtimes n str = do
 
 putList :: [Int] -> IO ()
 putList [] = putStr ""
-putList (a : as) = do putStr (show (a) ++ " ")
-                      putList (as)
+putList (a:as) = do putStr (show (a) ++ if null(as) then "" else ",")
+                    putList (as)
 
 --main = do putList [1,2,3]
 
@@ -82,10 +91,20 @@ remover (a:as) s | a == s = as
 escreveArquivo :: FilePath -> [String] -> IO ()
 escreveArquivo file strs = writeFile file (show strs)
 
+{-
 leArquivo :: FilePath -> IO [String]
 leArquivo file = do 
     conteudo <- readFile file
     return (read conteudo::[String])
+-}
+
+leArquivo :: FilePath -> IO [String]
+leArquivo file = do 
+    conteudo <- readFile file
+    evaluate (length conteudo)  -- força leitura
+    if null conteudo
+      then return []
+      else return (read conteudo :: [String])
 
 --{-
 menu :: [String] -> IO ()
@@ -125,10 +144,15 @@ strs0 = ["abc","def"]
 
 --main = menu strs0
 
-nomeArquivo = "b.txt"
+nomeArquivo = "strings.txt"
 
 --{-
+main :: IO ()
 main = do
+    existe <- doesFileExist nomeArquivo
+    if not existe
+      then escreveArquivo nomeArquivo []  -- cria vazio
+      else return ()
     conteudo <- leArquivo nomeArquivo
     menu conteudo
 ---}

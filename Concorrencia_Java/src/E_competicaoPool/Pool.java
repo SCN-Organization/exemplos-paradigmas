@@ -13,7 +13,7 @@ import java.util.concurrent.Semaphore;
 public class Pool {
         
    private final int maxAvailable;//quantidade de itens disponíveis
-   private final Object[] items;//itens disponíveis
+   private final Object[] items;//itens disponíveis, nesse exemplo são strings
    private final boolean[] used;//marcar itens utilizados/disponíveis
    private final Semaphore available;
    
@@ -28,7 +28,7 @@ public class Pool {
    }
 
    public Object getItem() throws InterruptedException {
-     available.acquire();
+     available.acquire();//acquire -> wait
      return getNextAvailableItem();
    }
 

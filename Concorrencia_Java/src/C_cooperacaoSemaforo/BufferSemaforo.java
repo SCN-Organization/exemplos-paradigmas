@@ -12,21 +12,21 @@ import java.util.concurrent.Semaphore;
 public class BufferSemaforo {
 
     private final char[] buf;
-    private int tam;
+    private int proximo;
     private final int MAX = 1000;
     private final Semaphore semaforo;
 
     public BufferSemaforo() {
-        semaforo = new Semaphore(0);//acquire/release
+        semaforo = new Semaphore(0);//wait -> acquire, release -> release
         buf = new char[MAX];
-        tam = 0;
+        proximo = 0;
     }
     
     public synchronized void inserir(char c) {
-        if (tam == MAX) {
+        if (proximo == MAX) {
             semaforo.release();
         } else {
-            buf[tam++] = c;
+            buf[proximo++] = c; //buf[proximo] = c; proximo++;
         }
 
     }
@@ -36,7 +36,7 @@ public class BufferSemaforo {
             semaforo.acquire();//equivale ao wait
         } catch (InterruptedException ie) {
         }
-        tam = 0;
+        proximo = 0;
         return new String(buf);
     }
 

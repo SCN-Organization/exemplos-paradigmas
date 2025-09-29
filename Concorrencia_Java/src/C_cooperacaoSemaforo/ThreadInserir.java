@@ -15,7 +15,7 @@ public class ThreadInserir extends Thread {
         for (int i = 0; i < 5000; i++) {
             buffer.inserir(id);
             try {
-                sleep((long) 0);
+                sleep((long) 10);
             } catch (InterruptedException ie) {
             }
         }

@@ -18,4 +18,5 @@ public class MeuStringBuffer {//implementação thread safe
         return new String(buffer.toString());
     }
 
+
 }

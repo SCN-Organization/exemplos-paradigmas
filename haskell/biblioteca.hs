@@ -1,16 +1,13 @@
 import Data.List (delete, find, group, nub, sortBy)
 
 type Nome = String
-
 type Telefone = Int
-
 data Pessoa = P Nome Telefone deriving (Show, Read)
 
 instance Eq Pessoa where
   P n1 t1 == P n2 t2 = n1 == n2 && t1 == t2
 
 type Edicao = Int
-
 data Livro = L Nome Edicao deriving (Show, Read)
 
 instance Eq Livro where

@@ -4,12 +4,12 @@ package D_cooperacaoWaitNotify;
 public class BufferWaitNotify {
 
     private final char[] buffer;//array que guarda elementos do buffer
-    private int tamanho;
+    private int proximo;
     private final int CAPACIDADE = 100;
     
     public BufferWaitNotify() {
         buffer = new char[CAPACIDADE];
-        tamanho = 0;
+        proximo = 0;
     }
 
     /**
@@ -19,8 +19,8 @@ public class BufferWaitNotify {
      * @param c Caractere para inserir.
      */
     public synchronized void inserir(char c) {
-        if (tamanho < CAPACIDADE) {
-            buffer[tamanho++] = c;
+        if (proximo < CAPACIDADE) {
+            buffer[proximo++] = c;
         } else {
             notifyAll();//notifica se houver alguma thread no wait 
         }
@@ -34,12 +34,12 @@ public class BufferWaitNotify {
      * @return Conteúdo do buffer.
      */
     public synchronized String esvaziar() {
-        while (tamanho < CAPACIDADE)
+        while (proximo < CAPACIDADE)
             try {
                 wait();//espera pela notificação de quando estiver cheio
             } catch (InterruptedException ie) {
             }
-        tamanho = 0;
+        proximo = 0;
         return new String(buffer);
     }
 

@@ -98,6 +98,14 @@ remove x [] = []
 remove x (a:as) | x == a = remove x as
                 | otherwise = a : remove x as
 
+meuLast :: [Int] -> Int
+meuLast [a] = a
+meuLast (a:as) = meuLast as
+
+sumPairs2 :: [(Int,Int)] -> [Int]
+sumPairs2 [] = []
+sumPairs2 ((x,y):as) = (x+y):sumPairs2 as
+
 -- (x:xs) ++ y = x : (xs ++ y)
 
 -- [1..4]

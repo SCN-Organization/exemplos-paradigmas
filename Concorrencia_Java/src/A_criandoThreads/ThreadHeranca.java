@@ -6,11 +6,11 @@ import java.util.logging.Logger;
 
 public class ThreadHeranca extends Thread {
 
-    Appendable bufffer;
+    Appendable buffer;
     private final String texto;
 
     public ThreadHeranca(Appendable buf, String texto) {
-        this.bufffer = buf;
+        this.buffer = buf;
         this.texto = texto;
     }
 
@@ -18,7 +18,7 @@ public class ThreadHeranca extends Thread {
     public void run() {
         for (int i = 0; i < 5; i++) {
             try {
-                bufffer.append(texto);
+                buffer.append(texto);
             } catch (IOException ex) {
                 Logger.getLogger(ThreadHeranca.class.getName()).log(Level.SEVERE, null, ex);
             }
