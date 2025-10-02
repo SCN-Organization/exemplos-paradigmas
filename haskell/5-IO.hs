@@ -9,7 +9,7 @@ writefoo = putStrLn "foo"
 
 f = do
   putStrLn "Ola"
-  putStr "Mundo!"
+  putStr "Mundo!" 
   line <- getLine -- v <- IO (String), type(v) == String
   putStr ("Meu amigo " ++ line )
 
@@ -26,9 +26,9 @@ getNput = do
 
 
 {-
-main = do putStr "Digite seu nome:"
+main = do putStr "O contrario de "
           st <- getLine
-          putStr ("O inverso de " ++ st ++ " ´e ")
+          putStr ("´e ")
           putStr (reverse st)
           putStr "\n"
 -}
@@ -122,10 +122,12 @@ menu strings = do
       putStrLn "Digite uma string para adicionar"
       line <- getLine
       menu (strings ++ [line])
+
     "2" -> do
       putStrLn "Strings atuais:"
       putStrLn $ show (strings)
       menu strings
+
     "3" -> do
       putStrLn "Digite a string que deseja remover"
       line <- getLine
@@ -152,7 +154,7 @@ main = do
     existe <- doesFileExist nomeArquivo
     if not existe
       then escreveArquivo nomeArquivo []  -- cria vazio
-      else return ()
+      else return () -- retorna IO ()
     conteudo <- leArquivo nomeArquivo
     menu conteudo
 ---}
