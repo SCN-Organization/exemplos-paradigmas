@@ -4,6 +4,10 @@ import Data.Char (isDigit)
 -- head:tail
 -- umElemento:umaLista
 
+meuLength :: [t] -> Int
+meuLength [] = 0
+meuLength (_:as) = 1 + meuLength as
+
 -- na biblioteca existe a função sum
 sumList :: [Int] -> Int
 sumList [] = 0
@@ -31,7 +35,7 @@ double [1,2]
 
 -- na biblioteca existe a função elem
 member :: Int -> [Int] -> Bool
-member x [] = False
+member _ [] = False
 member x (a:as) | (x == a) = True
                 | otherwise = member x as
 

@@ -12,7 +12,7 @@ baseExemplo = [("Sergio","O Senhor dos Aneis"), ("Andre", "Duna"), ("Fernando", 
 -- retorna as pessoas que pegaram emprestado um determinado livro
 --{-
 emprestimos :: BancoDados -> Livro -> [Pessoa]
-emprestimos [] l = [] 
+emprestimos [] _ = [] 
 emprestimos ((p,l2):as) l1 | (l2 == l1) = p : emprestimos as l1
                            | otherwise = emprestimos as l1
 

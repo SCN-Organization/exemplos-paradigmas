@@ -1,6 +1,6 @@
 package B_competicao;
 
-public class MeuStringBuffer {//implementação thread safe
+public class MeuStringBuffer  {//implementação thread safe
 
     private final StringBuilder buffer;
 

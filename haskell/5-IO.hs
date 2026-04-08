@@ -25,13 +25,12 @@ getNput = do
 --------------------------------------------------
 
 
-{-
-main = do putStr "O contrario de "
+leEInverte = do 
+          putStr "O contrario de "
           st <- getLine
-          putStr ("´e ")
+          putStr "´e "
           putStr (reverse st)
           putStr "\n"
--}
 
 
 --------------------------------------------------

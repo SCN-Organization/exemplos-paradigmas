@@ -36,8 +36,9 @@ public class BufferSemaforo {
             semaforo.acquire();//equivale ao wait
         } catch (InterruptedException ie) {
         }
+        String res = new String(buf);
         proximo = 0;
-        return new String(buf);
+        return res;
     }
 
 }

@@ -36,7 +36,7 @@ vendas 0 = 20
 vendas 1 = 50
 vendas 2 = 30
 vendas 3 = 50 
---vendas n = n*2
+vendas n = n*2
 
 {-
 vendas n | (n == 0) = 20

@@ -1,3 +1,6 @@
+
+import Text.Read (readMaybe)
+
 -- :t True
 -- True :: Bool
 
@@ -80,8 +83,11 @@ eval (Sub e1 e2) = (eval e1) - (eval e2)
 eval (Mul e1 e2) = (eval e1) * (eval e2)
 
 -- eval (Add (Lit 10) (Lit 10))
+-- 10 + 10
 -- eval (Sub (Add (Lit 10) (Lit 20)) (Lit 30))
+-- (10 + 20) - 30
 -- eval (Mul (Lit 10) (Lit 20))
+-- 10 * 20
 
 -- eval (Add (Lit 10) (Sub (Lit 20) (Lit 30)))
 -- = (eval (Lit 10)) + (eval (Sub (Lit 20) (Lit 30))
@@ -96,10 +102,14 @@ data Pairs t = Pair t t
 
 data List t = Nil | Cons t (List t)
 
--- :t Nil -- ([])
--- :t (Cons 1 (Nil)) -- (1:[]) == [1]
--- :t (Cons 1 (Cons 2 Nil)) -- (1:(2:[])) = [1,2]
--- :t (Cons 1 (Cons 2 (Cons 3 Nil))) -- ([1,2,3])
+-- Nil 
+-- ([])
+-- (Cons 1 (Nil)) 
+-- (1:[]) == [1]
+-- (Cons 1 (Cons 2 Nil)) 
+-- (1:(2:[])) = [1,2]
+-- (Cons 1 (Cons 2 (Cons 3 Nil))) 
+-- ([1,2,3])
 
 -- :t (Cons [1] (Nil))
 -- :t (Cons [1] (Cons [2] Nil))
@@ -111,7 +121,7 @@ toList (Cons h t) = h : toList t
 -- toList (Cons 1 (Cons 2 Nil))
 -- toList (Cons [1,3] (Cons [2,4] Nil))
 
-data Tree t = NilT | Node t (Tree t) (Tree t)
+data Tree t = NilT | Node t (Tree t) (Tree t) deriving (Show)
 
 -- :t NilT
 -- :t Node 1 (NilT) (NilT)
@@ -125,8 +135,8 @@ depth (Node _ l r) = 1 + max (depth l) (depth r)
 
 -- depth (Node 1 (Node 2 (NilT) (Node 3 (NilT) (NilT))) (NilT))
 
-maxT :: Tree Int -> Int
-maxT NilT = minBound::Int
+maxT :: Tree Integer -> Integer
+maxT NilT = 0
 maxT (Node v l r) = max (v) ( max (maxT l) (maxT r) )
 
 -- árvore para a imagem no link a seguir
