@@ -21,7 +21,6 @@ emprestimos2 b l1 = [p | (p,l2) <- b, l1 == l2]
 emprestimos3 [] l = [] 
 emprestimos3 ((p,l2):as) l1 = if (l2 == l1) then p : emprestimos as l1
                                 else emprestimos as l1
-
 ---}
 
 -- retorna todos os livros que estão na base
@@ -40,3 +39,9 @@ emprestar b p l = (p,l):b
 
 devolver :: BancoDados -> Pessoa -> Livro -> BancoDados
 devolver b p l = [ (p2,l2) | (p2,l2)<-b, p2/=p || l2 /=l ]
+
+livrosEmprestados :: BancoDados -> [Livro]
+livrosEmprestados b = map snd b 
+
+pessoasComLivros :: BancoDados -> [Pessoa]
+pessoasComLivros b = map fst b 

@@ -1,5 +1,7 @@
 //não precisa de include em https://pythontutor.com/c.html#mode=edit  
 
+int g;
+
 void f1(char c){
   int x = 10; //stack-dynamic
   printf("x = %d\n", x);
@@ -17,8 +19,8 @@ void f3(){
   x[1] = 40;
   x[2] = 50;
   int *y = x;//alias
-  printf("y = \{%d,%d,%d\}\n", 
-    y[0], y[1], y[2]);
+  printf("%p",y);//endereco de x
+  printf("y = \{%d,%d,%d\}\n", y[0], y[1], y[2]);
   free(x);
 }
 

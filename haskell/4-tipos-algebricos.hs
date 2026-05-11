@@ -72,9 +72,20 @@ data Expr = Lit Int
         | Sub Expr Expr 
         | Mul Expr Expr
 
--- :t Lit 678
--- :t Add (Lit 10) (Lit 10)
+-- 678
+-- Lit 678
+
+-- 10 + 10
+-- Add (Lit 10) (Lit 10)
+
+-- 10 + (20 - 30)
 -- :t Add (Lit 10) (Sub (Lit 20) (Lit 30))
+
+-- 10 * (20 + 5)
+-- :t Mul (Lit 10) (Add (Lit 20) (Lit 5))
+
+-- (10 * 20) + 5
+-- :t Add (Lit 5) (Mul (Lit 10) (Lit 20))
 
 eval :: Expr -> Int
 eval (Lit n) = n
@@ -102,14 +113,17 @@ data Pairs t = Pair t t
 
 data List t = Nil | Cons t (List t)
 
+-- []
 -- Nil 
--- ([])
--- (Cons 1 (Nil)) 
+
 -- (1:[]) == [1]
--- (Cons 1 (Cons 2 Nil)) 
+-- (Cons 1 (Nil)) 
+
 -- (1:(2:[])) = [1,2]
--- (Cons 1 (Cons 2 (Cons 3 Nil))) 
+-- (Cons 1 (Cons 2 Nil)) 
+
 -- ([1,2,3])
+-- (Cons 1 (Cons 2 (Cons 3 Nil))) 
 
 -- :t (Cons [1] (Nil))
 -- :t (Cons [1] (Cons [2] Nil))
@@ -127,7 +141,6 @@ data Tree t = NilT | Node t (Tree t) (Tree t) deriving (Show)
 -- :t Node 1 (NilT) (NilT)
 -- :t Node 1 (Node 2 (NilT) (NilT)) (NilT)
 -- :t Node 1 (Node 2 (NilT) (Node 3 (NilT) (NilT))) (NilT)
-
 
 depth :: Tree t -> Int
 depth NilT = 0

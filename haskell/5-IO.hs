@@ -84,7 +84,7 @@ listaStrings (h:t) = do
 
 remover :: [String] -> String -> [String]
 remover [] _ = []
-remover (a:as) s | a == s = as
+remover (a:as) s | a == s = (remover as s)
                  | otherwise = a : (remover as s)
 
 escreveArquivo :: FilePath -> [String] -> IO ()

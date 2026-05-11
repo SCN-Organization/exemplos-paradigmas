@@ -10,6 +10,8 @@ This program provides a possible solution for producer-consumer problem using mu
 The for illustration purposes, we use the same number for producers and consumers.
 */
 
+#define PRODUCERS 5
+#define CONSUMERS 5
 #define MaxItems 5 // Maximum items a producer can produce or a consumer can consume
 #define BufferSize 3 // Size of the buffer
 
@@ -56,30 +58,32 @@ void *consumer(void *cno)
 
 int main()
 {   
-    pthread_t pro[5];//array of producers
-    pthread_t con[5];//array of consumers
-    
+    pthread_t pro[PRODUCERS];//array of producers
+    pthread_t con[CONSUMERS];//array of consumers
+
     sem_init(&empty,0,BufferSize);//sem,type sem,initial value
     sem_init(&full,0,0);
     pthread_mutex_init(&mutex, NULL);
 
-    int indexes[5] = {1,2,3,4,5}; //Just used for numbering the producer and consumer
+    int MAX = (PRODUCERS >= CONSUMERS ? PRODUCERS : CONSUMERS);
+    int indexes[MAX];//Just used for numbering the producer and consumer
+    for(int i=0; i<MAX; i++) indexes[i] = i+1;
 
     //creates five producers
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < PRODUCERS; i++) {
         pthread_create(&pro[i], NULL, (void *)producer, (void *)&indexes[i]);
     }
 
     //creates five consumers
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < CONSUMERS; i++) {
         pthread_create(&con[i], NULL, (void *)consumer, (void *)&indexes[i]);
     }
 
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < PRODUCERS; i++) {
         pthread_join(pro[i], NULL);
     }
-    
-    for(int i = 0; i < 5; i++) {
+
+    for(int i = 0; i < CONSUMERS; i++) {
         pthread_join(con[i], NULL);
     }
 
@@ -88,5 +92,5 @@ int main()
     pthread_mutex_destroy(&mutex);
 
     return 0;
-    
+
 }

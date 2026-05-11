@@ -3,6 +3,7 @@ import Data.Char (isDigit, isAlpha)
 inverteSinal :: Int -> Int
 inverteSinal x = x * (-1)
 
+rev :: [t] -> [t]
 rev [] = []
 rev (a : as) = rev as ++ [a]
 
@@ -26,6 +27,8 @@ sqr x = x * x
 ------------------------------
 applyTwice :: (a -> a) -> a -> a
 applyTwice f x = f (f x)
+
+f :: [Int] -> Int
 
 -- erro de tipo se 
 --applyTwice sqr ([1]) 

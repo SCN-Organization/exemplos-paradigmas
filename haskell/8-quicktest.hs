@@ -4,6 +4,25 @@
 import Test.QuickCheck
 import Data.List
 
+------------------------------------------------------------
+-- Propriedade fatorial
+------------------------------------------------------------
+fat :: Integer -> Integer
+fat 0 = 1
+fat x = foldr1 (*) [1..x]
+
+prop_fatorial :: Integer -> Bool
+prop_fatorial x | x > 0 = fat (x+1) > fat x
+                | otherwise = True
+
+prop_fatorial2 :: Integer -> Bool
+prop_fatorial2 x | x >= 0 = (fat x) >= 1
+                 | otherwise = True
+
+-- O que acontece se:
+-- Mudar o tipo para Int?
+-- Remover o if/else com condição x>=1?
+-- Remover a linha fat 0 = 1?
 
 ------------------------------------------------------------
 -- Propriedade aritmética básica
@@ -13,6 +32,9 @@ import Data.List
 prop_addOneIncreases :: Int -> Bool
 prop_addOneIncreases x = x + 1 > x
 
+prop_addValueIncreases :: Int -> Int -> Bool
+prop_addValueIncreases x y | x > 0 && y > 0 = x + y > x
+                           | otherwise = True
 
 ------------------------------------------------------------
 -- Comutatividade
@@ -93,7 +115,9 @@ prop_delete x xs = exactOne x xs ==> not (elem x (delete x xs))
 runTests :: IO ()
 runTests = do
   putStrLn "\n=== Exemplos de QuickCheck ==="
+  quickCheck prop_fatorial
   quickCheck prop_addOneIncreases
+  quickCheck prop_addValueIncreases
   quickCheck prop_addCommutative
   quickCheck prop_mulCommutative
   quickCheck prop_addAssociative
