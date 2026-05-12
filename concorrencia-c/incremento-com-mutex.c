@@ -12,11 +12,11 @@ int delay_time(int limit) {
 
 void *thread1(void *tno) {
 
-    pthread_mutex_lock(&mutex); // inicio da região crítica
+    pthread_mutex_lock(&mutex); // wait do sem. binário
     int x = counter;
     usleep(delay_time(200));//200ms de delay
     counter = x + 1;
-    pthread_mutex_unlock(&mutex); // fim da região crítica
+    pthread_mutex_unlock(&mutex); // release do sem. binario
 
     return 0;
 }
@@ -24,13 +24,13 @@ void *thread1(void *tno) {
 int main() {
     pthread_mutex_init(&mutex, NULL);
 
-    int MAX = 100;
-    pthread_t threads[MAX];
+    int N = 2;
+    pthread_t threads[N];
 
-    for(int i = 0; i < MAX; i++)
+    for(int i = 0; i < N; i++)
         pthread_create(&threads[i], NULL, (void *)thread1, NULL);
 
-    for(int i = 0; i < MAX; i++)
+    for(int i = 0; i < N; i++)
         pthread_join(threads[i], NULL);
 
     printf("counter = %d", counter);

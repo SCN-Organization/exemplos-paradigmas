@@ -5,11 +5,15 @@
 
 int counter = 0;
 
-int delay_time(int limit) { return rand() % limit; }
+int delay_time(int limit) {
+  usleep(200);
+  return rand() % limit;
+}
 
 void *thread1(void *tno) {
+  usleep(delay_time(200));
   int x = counter;
-  // usleep(delay_time(200)); //descomente esta linha para ver contador = 2
+  usleep(delay_time(200));
   counter = x + 1;
   return 0;
 }

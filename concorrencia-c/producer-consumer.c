@@ -4,19 +4,21 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+
 
 /*
 This program provides a possible solution for producer-consumer problem using mutex and semaphore.
 The for illustration purposes, we use the same number for producers and consumers.
 */
 
-#define PRODUCERS 5
-#define CONSUMERS 5
+#define PRODUCERS 1
+#define CONSUMERS 2
 #define MaxItems 5 // Maximum items a producer can produce or a consumer can consume
-#define BufferSize 3 // Size of the buffer
+#define BufferSize 2 // Size of the buffer
 
-sem_t empty;
-sem_t full;
+sem_t empty;//inicialmente contador é igual a BufferSize
+sem_t full;// inicialmente contador é igual a 0
 pthread_mutex_t mutex;
 
 //controle do buffer circular
@@ -27,10 +29,15 @@ int out = 0;//index for removing
 //in : 0,1,2,..,BufferSize-1,0,1,2,..,BufferSize-1,...
 //in = (in+1)%BufferSize;
 
+int delay_time(int limit) {
+    return rand() % limit;
+}
+
 void *producer(void *pno)
 {   
     int item;
-    for(int i = 0; i < MaxItems; i++) {
+    for(; ;) {
+        usleep(delay_time(1000000));
         item = rand()%10; // Produce an random item in [0,10[
         sem_wait(&empty);//waits for empty cells and decrements
         pthread_mutex_lock(&mutex);
@@ -42,9 +49,11 @@ void *producer(void *pno)
     }
     return 0;
 }
+
 void *consumer(void *cno)
 {   
-    for(int i = 0; i < MaxItems; i++) {
+    for(; ;) {
+        usleep(delay_time(1000000));
         sem_wait(&full);//waits for non empty cells and decrements 
         pthread_mutex_lock(&mutex);
         int item = buffer[out]; //consumes
@@ -69,12 +78,12 @@ int main()
     int indexes[MAX];//Just used for numbering the producer and consumer
     for(int i=0; i<MAX; i++) indexes[i] = i+1;
 
-    //creates five producers
+    //creates producers
     for(int i = 0; i < PRODUCERS; i++) {
         pthread_create(&pro[i], NULL, (void *)producer, (void *)&indexes[i]);
     }
 
-    //creates five consumers
+    //creates consumers
     for(int i = 0; i < CONSUMERS; i++) {
         pthread_create(&con[i], NULL, (void *)consumer, (void *)&indexes[i]);
     }

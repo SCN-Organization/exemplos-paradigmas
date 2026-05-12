@@ -5,7 +5,7 @@
 
 // retorna valor entre 0 e limit-1
 int delay_time(int limit) { 
-  usleep(200);
+  usleep(200); //dorme 200 microseconds
   return rand() % limit; 
 }
 
@@ -13,14 +13,14 @@ int l = -1; // indefinido
 int h = -1; // indefinido
 
 void *func1(void *x) {
-  usleep(delay_time(800));//dorme por até 800 ms
+  usleep(delay_time(800));
   l = 0; // l = false
   printf("0");
   return 0;
 }
 
 void *func2(void *x) {
-  usleep(delay_time(800));//dorme por até 800 ms
+  usleep(delay_time(800));
   l = 1; // l = true
   printf("1");
   return 0;
@@ -28,7 +28,7 @@ void *func2(void *x) {
 
 void *func3(void *x) {
   // while(l == -1){//espera por valor em l
-     usleep(delay_time(800));//dorme por até 800 ms
+     usleep(delay_time(800));
   // }
   h = l;
   printf("h");
