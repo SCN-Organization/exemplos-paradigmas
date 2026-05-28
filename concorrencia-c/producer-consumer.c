@@ -14,7 +14,6 @@ The for illustration purposes, we use the same number for producers and consumer
 
 #define PRODUCERS 1
 #define CONSUMERS 2
-#define MaxItems 5 // Maximum items a producer can produce or a consumer can consume
 #define BufferSize 2 // Size of the buffer
 
 sem_t empty;//inicialmente contador é igual a BufferSize

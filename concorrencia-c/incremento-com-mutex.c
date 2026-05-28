@@ -14,7 +14,7 @@ void *thread1(void *tno) {
 
     pthread_mutex_lock(&mutex); // wait do sem. binário
     int x = counter;
-    usleep(delay_time(200));//200ms de delay
+    usleep(delay_time(200));
     counter = x + 1;
     pthread_mutex_unlock(&mutex); // release do sem. binario
 
