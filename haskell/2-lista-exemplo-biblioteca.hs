@@ -8,24 +8,22 @@ type BancoDados = [(Pessoa,Livro)]
 baseExemplo :: BancoDados
 baseExemplo = [("Sergio","O Senhor dos Aneis"), ("Andre", "Duna"), ("Fernando", "Jonathan Strange & Mr. Norrell"), ( "Fernando" , "Duna" ) ]
 
+-- retorna os livros que estão com uma pessoa
+livros :: BancoDados -> Pessoa -> [Livro]
+livros bd pessoa = [l | (p, l) <- bd, p == pessoa]
 
--- retorna as pessoas que pegaram emprestado um determinado livro
---{-
+-- retorna as pessoas que pegaram emprestado um livro
+emprestimos b l1 = [p | (p,l2) <- b, l1 == l2]
+{-
 emprestimos :: BancoDados -> Livro -> [Pessoa]
 emprestimos [] _ = [] 
 emprestimos ((p,l2):as) l1 | (l2 == l1) = p : emprestimos as l1
                            | otherwise = emprestimos as l1
 
-emprestimos2 b l1 = [p | (p,l2) <- b, l1 == l2]
 
 emprestimos3 [] l = [] 
-emprestimos3 ((p,l2):as) l1 = if (l2 == l1) then p : emprestimos as l1
-                                else emprestimos as l1
----}
-
--- retorna todos os livros que estão na base
-livros :: BancoDados -> Pessoa -> [Livro]
-livros bd pessoa = [l | (p, l) <- bd, p == pessoa]
+emprestimos3 ((p,l2):as) l1 = if (l2 == l1) then p : emprestimos as l1                                else emprestimos as l1
+-}
 
 emprestado :: BancoDados -> Livro -> Bool
 emprestado b l = emprestimos b l /= []
@@ -41,7 +39,9 @@ devolver :: BancoDados -> Pessoa -> Livro -> BancoDados
 devolver b p l = [ (p2,l2) | (p2,l2)<-b, p2/=p || l2 /=l ]
 
 livrosEmprestados :: BancoDados -> [Livro]
-livrosEmprestados b = map snd b 
+livrosEmprestados b = [ l | (p,l)<-b ]
+--livrosEmprestados b = map snd b 
 
 pessoasComLivros :: BancoDados -> [Pessoa]
-pessoasComLivros b = map fst b 
+pessoasComLivros b = [ p | (p,l)<-b ] 
+--pessoasComLivros b = map fst b 
